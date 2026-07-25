@@ -1,71 +1,54 @@
-import { Toaster } from 'sonner'
-import { WalletProvider, useWallet } from '@/lib/wallet'
-import { Logo } from '@/components/brand/logo'
-import { ConnectButton } from '@/components/connect-button'
-import { Dashboard } from '@/components/dashboard'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { explorerContractUrl } from '@/lib/config'
-
-function Shell() {
-  const { address, connect, connecting } = useWallet()
-
-  return (
-    <div className="mx-auto flex min-h-dvh max-w-3xl flex-col px-4">
-      <header className="flex items-center justify-between py-5">
-        <Logo />
-        <ConnectButton />
-      </header>
-
-      <main className="flex flex-1 flex-col gap-6 py-4">
-        <section>
-          <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-            Your on-chain piggy bank
-          </h1>
-          <p className="mt-1 max-w-prose text-muted-foreground">
-            Deposit and withdraw XLM through the Celengan smart contract on Stellar testnet.
-          </p>
-        </section>
-
-        {address ? (
-          <Dashboard address={address} />
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>Connect to start saving</CardTitle>
-              <CardDescription>
-                Use Freighter, xBull, Albedo or any supported Stellar wallet on testnet.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button onClick={() => void connect()} disabled={connecting}>
-                {connecting ? 'Connecting...' : 'Connect wallet'}
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-      </main>
-
-      <footer className="flex items-center justify-between py-6 text-xs text-muted-foreground">
-        <span>Celengan - on-chain savings on Stellar</span>
-        <a
-          className="text-primary-ink hover:underline"
-          href={explorerContractUrl()}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Contract
-        </a>
-      </footer>
-    </div>
-  )
-}
+import { ThemeProvider } from 'next-themes'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { AppShell } from '@/components/app-shell'
+import { NotFoundContent } from '@/components/not-found-content'
+import { Toaster } from '@/components/ui/sonner'
+import { AppStateProvider } from '@/lib/app-state'
+import { SettingsProvider } from '@/lib/settings'
+import { WalletProvider } from '@/lib/wallet'
+import { ActivityPage } from '@/pages/activity'
+import { Dashboard } from '@/pages/dashboard'
+import { Landing } from '@/pages/landing'
+import { NotFoundPage } from '@/pages/not-found'
+import { PayPage } from '@/pages/pay'
+import { PaymentLinkPage } from '@/pages/payment-link'
+import { RulesPage } from '@/pages/rules'
+import { SettingsPage } from '@/pages/settings'
+import { WithdrawPage } from '@/pages/withdraw'
+import { YieldPage } from '@/pages/yield'
 
 export function App() {
   return (
-    <WalletProvider>
-      <Shell />
-      <Toaster position="top-center" richColors />
-    </WalletProvider>
+    <ThemeProvider
+      attribute="class"
+      storageKey="celengan:theme"
+      defaultTheme="light"
+      disableTransitionOnChange
+    >
+      <SettingsProvider>
+        <WalletProvider>
+          <AppStateProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/pay/:address" element={<PayPage />} />
+                <Route path="/app" element={<AppShell />}>
+                  <Route index element={<Dashboard />} />
+                  <Route path="activity" element={<ActivityPage />} />
+                  <Route path="yield" element={<YieldPage />} />
+                  <Route path="withdraw" element={<WithdrawPage />} />
+                  <Route path="rules" element={<RulesPage />} />
+                  <Route path="link" element={<PaymentLinkPage />} />
+                  <Route path="settings" element={<SettingsPage />} />
+                  <Route path="*" element={<NotFoundContent />} />
+                </Route>
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </BrowserRouter>
+            <Toaster />
+          </AppStateProvider>
+        </WalletProvider>
+      </SettingsProvider>
+    </ThemeProvider>
   )
 }
