@@ -1,42 +1,61 @@
 # Celengan
 
-Celengan (Indonesian for piggy bank) is a Stellar dApp for checking your balance
-and sending XLM on the Stellar testnet. Connect the Freighter wallet, view your
-XLM balance, fund a fresh account with one click, and send a payment with live
-transaction feedback.
+Celengan (Indonesian for piggy bank) is a Stellar dApp: an on-chain savings
+vault. Connect any Stellar wallet, deposit XLM into the Celengan smart contract
+on the Stellar testnet, and withdraw anytime. Balances are held on-chain by the
+contract.
 
 ## Features
 
-- Connect and disconnect the Freighter wallet
-- Detect the active network and require Stellar Testnet
-- Fetch and display the connected wallet's XLM balance
-- Fund an empty testnet account with one click (friendbot)
-- Send an XLM payment on testnet (auto-creates the destination if it is new)
-- Transaction feedback: pending, success (with hash and explorer link), or a
-  readable failure message
+- Multi-wallet connect via Stellar Wallets Kit (Freighter, xBull, Albedo, Lobstr,
+  Rabet and more)
+- Deposit and withdraw XLM through the `celengan` Soroban contract
+- On-chain savings balance read from the contract; wallet XLM balance from Horizon
+- One-click testnet funding (friendbot)
+- Transaction status feedback with hash and explorer link
+- Handled error cases: no wallet connected, request rejected, insufficient balance
 
 ## Tech stack
 
-- React 19 + Vite + TypeScript
-- `@stellar/stellar-sdk` (Horizon, transaction building and submission)
-- `@stellar/freighter-api` (wallet connection and signing)
-- Plain CSS (no UI framework)
+- Contract: Soroban (Rust), `soroban-sdk` 26
+- Frontend: React 19 + Vite + TypeScript + Tailwind v4
+- Wallet: `@creit.tech/stellar-wallets-kit`
+- Chain access: `@stellar/stellar-sdk` (Horizon + Soroban RPC) and generated
+  TypeScript contract bindings
 
-## Project structure
+## Contract (testnet)
+
+- `celengan`: `CD265PMPW2K2RKGW2XXZBZAUB7R5JNJKKDAZ7YK4TG7GVW6FQBB63NYF`
+- Explorer: https://stellar.expert/explorer/testnet/contract/CD265PMPW2K2RKGW2XXZBZAUB7R5JNJKKDAZ7YK4TG7GVW6FQBB63NYF
+
+## Repository structure
 
 ```
 celengan-stellar/
-  web/    # React + Vite frontend
-  docs/   # screenshots
+  contracts/                 # Soroban celengan contract (Rust)
+  packages/celengan-client/  # generated TypeScript bindings
+  web/                       # React + Vite frontend
+  docs/                      # screenshots
 ```
 
 ## Prerequisites
 
 - Node.js 20+ and npm
-- The [Freighter](https://www.freighter.app/) browser extension, set to the
-  **Testnet** network
+- Rust and the [Stellar CLI](https://developers.stellar.org/docs/tools/cli) (for
+  the contract)
+- A Stellar wallet extension set to the Testnet network
 
 ## Run locally
+
+Contract tests and build:
+
+```
+cd contracts
+cargo test
+stellar contract build
+```
+
+Frontend:
 
 ```
 cd web
@@ -46,31 +65,45 @@ npm run dev
 
 Open the printed local URL (default http://localhost:5173).
 
-Build for production:
+## Deploy the contract (testnet)
 
 ```
-cd web
-npm run build
-npm run preview
+cd contracts
+stellar contract build
+stellar contract deploy \
+  --wasm target/wasm32v1-none/release/celengan.wasm \
+  --source <your-identity> \
+  --network testnet \
+  -- \
+  --token CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC
 ```
+
+The `--token` argument is the testnet native XLM Stellar Asset Contract. Set
+`VITE_CELENGAN_ID` (or update `web/src/lib/config.ts` and `deployments.json`) to
+the newly deployed contract id.
 
 ## Usage
 
-1. Set Freighter to the Testnet network.
-2. Click **Connect Freighter** and approve access.
-3. If the balance is 0, click **Get testnet XLM** to fund via friendbot.
-4. Enter a destination address and an amount, then **Send on testnet**.
-5. On success, open the transaction on Stellar Expert via the provided link.
+1. Connect a Stellar wallet on testnet.
+2. If the wallet balance is 0, click Get testnet XLM to fund via friendbot.
+3. Deposit XLM into the contract, or withdraw from your savings.
+4. Each contract call shows a status and a link to the transaction on Stellar Expert.
 
 ## Screenshots
 
-Connected wallet and balance:
+Captured on testnet.
 
-![Celengan connected to Freighter on testnet, showing the XLM balance and send form](docs/screenshots/01-connected-balance.png)
+Wallet options (multi-wallet connect):
 
-Successful testnet transaction (added after running a send):
+![Wallet options modal](docs/screenshots/wallet-options.png)
 
-![Celengan showing a successful testnet transaction with hash and explorer link](docs/screenshots/02-tx-success.png)
+Deposit and withdraw dashboard:
+
+![Deposit and withdraw dashboard](docs/screenshots/dashboard.png)
+
+Successful contract-call transaction:
+
+![Successful contract-call transaction](docs/screenshots/contract-tx.png)
 
 ## License
 
