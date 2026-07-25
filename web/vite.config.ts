@@ -9,5 +9,9 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+    // The contract bindings are a symlinked file: package; force Vite to resolve
+    // the SDK from web/node_modules so its imports work when the linked package
+    // has no node_modules of its own (as on Vercel).
+    dedupe: ['@stellar/stellar-sdk'],
   },
 })
