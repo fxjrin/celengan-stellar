@@ -1,35 +1,34 @@
-export type AppErrorKind = 'wallet' | 'rejected' | 'insufficient' | 'unknown'
+import type { MessageKey } from '@/lib/i18n'
 
-export interface AppError {
-  kind: AppErrorKind
-  message: string
+const CONTRACT_ERROR_KEYS: Record<number, MessageKey> = {
+  1: 'errors.invalidAmount',
+  2: 'errors.invalidSplit',
+  3: 'errors.insufficientSpendable',
+  4: 'errors.insufficientShares',
+  5: 'errors.savingsLocked',
+  6: 'errors.lockNotExtended',
+  7: 'errors.emptyWithdrawal',
+  8: 'errors.lockTooFar',
+  9: 'errors.switchTargetWithBalance',
+  1000: 'errors.paused',
 }
 
-// Maps raw wallet/RPC/contract failures to the three error classes the flow
-// cares about (missing wallet, user rejection, insufficient funds), so the UI
-// can show one clear message instead of a raw stack.
-export function classifyError(error: unknown): AppError {
-  const raw = error instanceof Error ? error.message : String(error)
-  const text = raw.toLowerCase()
+// wallet kit rejects with plain { code, message } objects, not Error instances
+function errorMessage(e: unknown): string {
+  if (e instanceof Error) return e.message
+  if (typeof e === 'object' && e !== null && 'message' in e) {
+    const message = (e as { message: unknown }).message
+    if (typeof message === 'string') return message
+  }
+  return 'Something went wrong'
+}
 
-  if (text.includes('not connected') || text.includes('no wallet') || text.includes('wallet not')) {
-    return { kind: 'wallet', message: 'Connect a wallet first.' }
-  }
-  if (
-    text.includes('declined') ||
-    text.includes('rejected') ||
-    text.includes('denied') ||
-    text.includes('cancel')
-  ) {
-    return { kind: 'rejected', message: 'You rejected the request in your wallet.' }
-  }
-  if (
-    text.includes('insufficient') ||
-    text.includes('underfunded') ||
-    text.includes('insufficientbalance') ||
-    text.includes('error(contract, #2)')
-  ) {
-    return { kind: 'insufficient', message: 'Insufficient balance for this amount.' }
-  }
-  return { kind: 'unknown', message: raw }
+export function errorKey(e: unknown): MessageKey {
+  const text = `${String(e)} ${errorMessage(e)}`
+  const contract = /Error\(Contract, #(\d+)\)/.exec(text)
+  if (contract) return CONTRACT_ERROR_KEYS[Number(contract[1])] ?? 'errors.generic'
+  if (text.includes('faucet_unavailable')) return 'errors.faucetUnavailable'
+  if (text.includes('faucet_maybe_funded')) return 'errors.faucetAlreadyFunded'
+  if (/reject|declin|denied|closed/i.test(text)) return 'errors.walletCancelled'
+  return 'errors.generic'
 }

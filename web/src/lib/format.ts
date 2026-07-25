@@ -1,27 +1,24 @@
-const XLM_SCALE = 10_000_000n
+const USDC_SCALE = 10_000_000n
 
-// Parses a decimal XLM string into stroops (7-decimal fixed point).
-export function parseXlm(input: string): bigint {
+export function parseUsdc(input: string): bigint {
   const trimmed = input.trim()
   if (!/^\d+(\.\d{1,7})?$/.test(trimmed)) throw new Error('Invalid amount')
   const [whole, frac = ''] = trimmed.split('.')
-  return BigInt(whole) * XLM_SCALE + BigInt(frac.padEnd(7, '0'))
+  return BigInt(whole) * USDC_SCALE + BigInt(frac.padEnd(7, '0'))
 }
 
-// Formats stroops as a trimmed decimal XLM string.
-export function formatXlm(amount: bigint): string {
-  const negative = amount < 0n
-  const abs = negative ? -amount : amount
-  const whole = abs / XLM_SCALE
-  const frac = (abs % XLM_SCALE).toString().padStart(7, '0').replace(/0+$/, '')
-  const body = frac === '' ? whole.toString() : `${whole}.${frac}`
-  return negative ? `-${body}` : body
+// plain decimal string that parseUsdc accepts, for prefilling inputs
+export function usdcToInput(amount: bigint): string {
+  const whole = (amount / USDC_SCALE).toString()
+  const frac = (amount % USDC_SCALE).toString().padStart(7, '0').replace(/0+$/, '')
+  return frac === '' ? whole : `${whole}.${frac}`
 }
 
-export function shortAddress(value: string): string {
-  return value.length <= 10 ? value : `${value.slice(0, 4)}...${value.slice(-4)}`
+export function usdcToNumber(amount: bigint): number {
+  return Number(amount) / 1e7
 }
 
-export function shortHash(value: string): string {
-  return value.length <= 14 ? value : `${value.slice(0, 8)}...${value.slice(-6)}`
+// truncates a hex string (tx hash, address) for compact display: abcd1234...wxyz9876
+export function shortHex(value: string): string {
+  return value.length <= 12 ? value : `${value.slice(0, 6)}...${value.slice(-6)}`
 }

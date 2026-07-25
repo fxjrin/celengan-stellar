@@ -7,77 +7,119 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { StellarWalletsKit, Networks } from '@creit.tech/stellar-wallets-kit'
-import { defaultModules } from '@creit.tech/stellar-wallets-kit/modules/utils'
 import { NETWORK_PASSPHRASE } from '@/lib/config'
 import { setWalletBridge } from '@/lib/wallet-bridge'
 
 const ADDRESS_KEY = 'celengan:address'
 
-let initialized = false
+type Kit = typeof import('@creit.tech/stellar-wallets-kit').StellarWalletsKit
 
-function ensureInit(): void {
-  if (initialized) return
-  StellarWalletsKit.init({ modules: defaultModules(), network: Networks.TESTNET })
-  initialized = true
-}
-
-interface WalletContextValue {
+type WalletContextValue = {
   address: string | null
   connecting: boolean
   connect: () => Promise<void>
-  disconnect: () => void
+  disconnect: () => Promise<void>
+  signTransaction: (xdr: string) => Promise<string>
 }
 
 const WalletContext = createContext<WalletContextValue | null>(null)
+
+let kitPromise: Promise<Kit> | null = null
+
+// lazy so the app renders even if no wallet extension exists or the kit fails to load
+function loadKit(): Promise<Kit> {
+  kitPromise ??= (async () => {
+    const [{ StellarWalletsKit, Networks }, { defaultModules }] = await Promise.all([
+      import('@creit.tech/stellar-wallets-kit'),
+      import('@creit.tech/stellar-wallets-kit/modules/utils'),
+    ])
+    StellarWalletsKit.init({
+      modules: defaultModules(),
+      network: Networks.TESTNET,
+    })
+    return StellarWalletsKit
+  })()
+  return kitPromise
+}
 
 export function WalletProvider({ children }: { children: ReactNode }) {
   const [address, setAddress] = useState<string | null>(null)
   const [connecting, setConnecting] = useState(false)
 
-  const bind = useCallback((addr: string) => {
-    setAddress(addr)
-    setWalletBridge({
-      address: addr,
-      sign: (xdr) =>
-        StellarWalletsKit.signTransaction(xdr, {
-          networkPassphrase: NETWORK_PASSPHRASE,
-          address: addr,
-        }),
-    })
+  useEffect(() => {
+    const stored = localStorage.getItem(ADDRESS_KEY)
+    if (!stored) return
+    let cancelled = false
+    void (async () => {
+      try {
+        const kit = await loadKit()
+        if (cancelled) return
+        setAddress(stored)
+        setWalletBridge({
+          address: stored,
+          sign: (xdr) =>
+            kit.signTransaction(xdr, {
+              networkPassphrase: NETWORK_PASSPHRASE,
+              address: stored,
+            }),
+        })
+      } catch {
+        localStorage.removeItem(ADDRESS_KEY)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const connect = useCallback(async () => {
     setConnecting(true)
     try {
-      ensureInit()
-      const { address: addr } = await StellarWalletsKit.authModal()
-      localStorage.setItem(ADDRESS_KEY, addr)
-      bind(addr)
+      const kit = await loadKit()
+      const result = await kit.authModal()
+      setAddress(result.address)
+      localStorage.setItem(ADDRESS_KEY, result.address)
+      setWalletBridge({
+        address: result.address,
+        sign: (xdr) =>
+          kit.signTransaction(xdr, {
+            networkPassphrase: NETWORK_PASSPHRASE,
+            address: result.address,
+          }),
+      })
     } finally {
       setConnecting(false)
     }
-  }, [bind])
-
-  const disconnect = useCallback(() => {
-    localStorage.removeItem(ADDRESS_KEY)
-    setAddress(null)
-    setWalletBridge(null)
-    void StellarWalletsKit.disconnect().catch(() => undefined)
   }, [])
 
-  // Restore a prior session; the kit persists the selected wallet, so signing
-  // keeps working after a reload without reopening the modal.
-  useEffect(() => {
-    const stored = localStorage.getItem(ADDRESS_KEY)
-    if (!stored) return
-    ensureInit()
-    bind(stored)
-  }, [bind])
+  const disconnect = useCallback(async () => {
+    setAddress(null)
+    setWalletBridge(null)
+    localStorage.removeItem(ADDRESS_KEY)
+    try {
+      const kit = await loadKit()
+      await kit.disconnect()
+    } catch {
+      // local state is already cleared; kit cleanup is best-effort
+    }
+  }, [])
+
+  const signTransaction = useCallback(
+    async (xdr: string) => {
+      if (!address) throw new Error('Wallet not connected')
+      const kit = await loadKit()
+      const { signedTxXdr } = await kit.signTransaction(xdr, {
+        networkPassphrase: NETWORK_PASSPHRASE,
+        address,
+      })
+      return signedTxXdr
+    },
+    [address],
+  )
 
   const value = useMemo(
-    () => ({ address, connecting, connect, disconnect }),
-    [address, connecting, connect, disconnect],
+    () => ({ address, connecting, connect, disconnect, signTransaction }),
+    [address, connecting, connect, disconnect, signTransaction],
   )
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>
