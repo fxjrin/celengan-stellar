@@ -1,59 +1,71 @@
-import { useWallet } from '@/hooks/useWallet'
-import { useSend } from '@/hooks/useSend'
-import { Header } from '@/components/Header'
-import { BalanceCard } from '@/components/BalanceCard'
-import { SendForm } from '@/components/SendForm'
-import { TxResult } from '@/components/TxResult'
+import { Toaster } from 'sonner'
+import { WalletProvider, useWallet } from '@/lib/wallet'
+import { Logo } from '@/components/brand/logo'
+import { ConnectButton } from '@/components/connect-button'
+import { Dashboard } from '@/components/dashboard'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { explorerContractUrl } from '@/lib/config'
 
-export function App() {
-  const wallet = useWallet()
-  const { tx, send, reset } = useSend(() => void wallet.refreshBalance())
+function Shell() {
+  const { address, connect, connecting } = useWallet()
 
   return (
-    <div className="app">
-      <Header wallet={wallet} />
+    <div className="mx-auto flex min-h-dvh max-w-3xl flex-col px-4">
+      <header className="flex items-center justify-between py-5">
+        <Logo />
+        <ConnectButton />
+      </header>
 
-      <main className="main">
-        <section className="hero">
-          <h1>Save and send XLM on Stellar testnet</h1>
-          <p>
-            Connect Freighter, check your balance, and make your first testnet
-            payment. Celengan is your on-chain piggy bank starter.
+      <main className="flex flex-1 flex-col gap-6 py-4">
+        <section>
+          <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+            Your on-chain piggy bank
+          </h1>
+          <p className="mt-1 max-w-prose text-muted-foreground">
+            Deposit and withdraw XLM through the Celengan smart contract on Stellar testnet.
           </p>
         </section>
 
-        {wallet.error && <div className="banner banner-error">{wallet.error}</div>}
-
-        {!wallet.address ? (
-          <section className="card connect-card">
-            <p>Connect your Freighter wallet to get started.</p>
-            <button className="btn btn-primary" onClick={wallet.connect} disabled={wallet.connecting}>
-              {wallet.connecting ? 'Connecting...' : 'Connect Freighter'}
-            </button>
-            <a className="link" href="https://www.freighter.app/" target="_blank" rel="noreferrer">
-              Do not have Freighter? Install it
-            </a>
-          </section>
+        {address ? (
+          <Dashboard address={address} />
         ) : (
-          <div className="grid">
-            <BalanceCard wallet={wallet} />
-            <SendForm
-              wallet={wallet}
-              pending={tx.status === 'pending'}
-              onSend={(to, amount) => {
-                if (wallet.address) void send(wallet.address, to, amount)
-              }}
-            />
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Connect to start saving</CardTitle>
+              <CardDescription>
+                Use Freighter, xBull, Albedo or any supported Stellar wallet on testnet.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={() => void connect()} disabled={connecting}>
+                {connecting ? 'Connecting...' : 'Connect wallet'}
+              </Button>
+            </CardContent>
+          </Card>
         )}
-
-        <TxResult tx={tx} onDismiss={reset} />
       </main>
 
-      <footer className="footer">
+      <footer className="flex items-center justify-between py-6 text-xs text-muted-foreground">
         <span>Celengan - on-chain savings on Stellar</span>
-        <span>Testnet</span>
+        <a
+          className="text-primary-ink hover:underline"
+          href={explorerContractUrl()}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Contract
+        </a>
       </footer>
     </div>
+  )
+}
+
+export function App() {
+  return (
+    <WalletProvider>
+      <Shell />
+      <Toaster position="top-center" richColors />
+    </WalletProvider>
   )
 }
