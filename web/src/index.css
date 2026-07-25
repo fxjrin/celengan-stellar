@@ -1,368 +1,180 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Geist Variable', sans-serif;
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-ink: var(--primary-ink);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --color-gold: var(--gold);
+  --color-gold-ink: var(--gold-ink);
+  --color-growth: var(--growth);
+  --color-growth-ink: var(--growth-ink);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
 :root {
-  --bg: #0b0b12;
-  --bg-soft: #12121c;
-  --card: #16161f;
-  --card-border: #262633;
-  --text: #e9e9f1;
-  --muted: #9a9ab0;
-  --primary: #7c5cff;
-  --primary-hover: #6d4cf2;
-  --primary-soft: rgba(124, 92, 255, 0.14);
-  --ok: #34d399;
-  --warn: #f59e0b;
-  --danger: #f87171;
-  --radius: 14px;
-  color-scheme: dark;
+  --background: oklch(0.979 0.007 88.6);
+  --foreground: oklch(0.216 0.006 56.043);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.216 0.006 56.043);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.216 0.006 56.043);
+  --primary: oklch(0.892 0.177 96.8);
+  --primary-foreground: oklch(0.228 0.036 93.6); /* dark text on Stellar yellow, never white */
+  --primary-ink: oklch(0.54 0.11 82); /* brand yellow is 1.4:1 as text on white; links and icons need this amber */
+  --secondary: oklch(0.671 0.109 225.3);
+  --secondary-foreground: oklch(0.263 0.051 236.7);
+  --muted: oklch(0.97 0.001 106.424);
+  --muted-foreground: oklch(0.553 0.013 58.071);
+  --accent: oklch(0.945 0.036 87.8);
+  --accent-foreground: oklch(0.519 0.097 73.5);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.88 0.006 48.7); /* one step past hairline so card and input edges read without squinting */
+  --input: oklch(0.88 0.006 48.7);
+  --ring: oklch(0.655 0.135 83.6); /* deep amber at 3:1 on the ivory bg; pure yellow vanishes */
+  --gold: oklch(0.751 0.13 79.8); /* saturated savings gold; --accent stays a pale wash */
+  --gold-ink: oklch(0.52 0.13 79.8); /* --gold is 2.25:1 on card, decorative only; this is the readable text shade */
+  --growth: oklch(0.751 0.13 145); /* same L/C as --gold, hue shifted to green for the earn-yield step */
+  --growth-ink: oklch(0.52 0.13 145); /* readable text shade, mirrors --gold-ink's contrast treatment */
+  --radius: 0.75rem;
 }
 
-* {
-  box-sizing: border-box;
+.dark {
+  --background: oklch(0.184 0.005 67.5);
+  --foreground: oklch(0.934 0.010 87.5); /* warm off-white, not glare-white, still 15:1 on bg */
+  --card: oklch(0.216 0.006 56);
+  --card-foreground: oklch(0.934 0.010 87.5);
+  --popover: oklch(0.246 0.014 81.6);
+  --popover-foreground: oklch(0.934 0.010 87.5);
+  --primary: oklch(0.87 0.15 96.8); /* Stellar yellow, chroma eased so it does not vibrate on charcoal */
+  --primary-foreground: oklch(0.228 0.036 93.6);
+  --primary-ink: oklch(0.87 0.15 96.8); /* on charcoal the yellow itself is readable ink */
+  --secondary: oklch(0.737 0.104 223.7);
+  --secondary-foreground: oklch(0.266 0.049 235);
+  --muted: oklch(0.267 0.011 73.5);
+  --muted-foreground: oklch(0.746 0.023 76.5);
+  --accent: oklch(0.311 0.045 87.5);
+  --accent-foreground: oklch(0.807 0.122 84);
+  --destructive: oklch(0.66 0.2 25);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.775 0.146 90.6);
+  --gold: oklch(0.807 0.122 84);
+  --gold-ink: oklch(0.85 0.122 84); /* lighter than --gold so it still clears 4.5:1 on the bg-gold/15 badge tint, not just on card */
+  --growth: oklch(0.807 0.122 145);
+  --growth-ink: oklch(0.85 0.122 145); /* mirrors --gold-ink's lighter-on-dark treatment */
 }
 
-html,
-body,
-#root {
-  height: 100%;
-  margin: 0;
-}
-
-body {
-  background:
-    radial-gradient(1200px 600px at 50% -10%, rgba(124, 92, 255, 0.16), transparent 60%),
-    var(--bg);
-  color: var(--text);
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  line-height: 1.5;
-}
-
-.app {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 24px;
-  border-bottom: 1px solid var(--card-border);
-}
-
-.logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.logo-text {
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: -0.01em;
-}
-
-.main {
-  width: 100%;
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 40px 24px 24px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.hero h1 {
-  font-size: clamp(1.6rem, 4vw, 2.3rem);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  margin: 0 0 10px;
-}
-
-.hero p {
-  color: var(--muted);
-  margin: 0;
-  max-width: 60ch;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-@media (max-width: 680px) {
-  .grid {
-    grid-template-columns: 1fr;
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
-.card {
-  background: var(--card);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-head h2 {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin: 0;
-}
-
-.connect-card {
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.balance {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.balance-amount {
-  font-size: 2.4rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-}
-
-.balance-unit {
-  color: var(--muted);
-  font-weight: 600;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-
-.field input {
-  background: var(--bg-soft);
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
-  padding: 11px 12px;
-  color: var(--text);
-  font-size: 0.95rem;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.15s ease;
-}
-
-.field input:focus {
-  border-color: var(--primary);
-}
-
-.btn {
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 10px 16px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
-}
-
-.btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: #fff;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: var(--primary-hover);
-}
-
-.btn-secondary {
-  background: var(--primary-soft);
-  color: var(--text);
-  border-color: var(--card-border);
-  align-self: flex-start;
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--muted);
-  border-color: var(--card-border);
-  padding: 7px 12px;
-}
-
-.btn-ghost:hover:not(:disabled) {
-  color: var(--text);
-}
-
-.btn-block {
-  width: 100%;
-}
-
-.link {
-  color: var(--primary);
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.link:hover {
-  text-decoration: underline;
-}
-
-.wallet-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--card);
-  border: 1px solid var(--card-border);
-  border-radius: 999px;
-  padding: 5px 6px 5px 12px;
-}
-
-.wallet-addr {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.85rem;
-}
-
-.net-badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 3px 8px;
-  border-radius: 999px;
-}
-
-.net-ok {
-  background: rgba(52, 211, 153, 0.16);
-  color: var(--ok);
-}
-
-.net-warn {
-  background: rgba(245, 158, 11, 0.16);
-  color: var(--warn);
-}
-
-.form-error {
-  color: var(--danger);
-  font-size: 0.85rem;
-  margin: 0;
-}
-
-.banner {
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 0.9rem;
-}
-
-.banner-error {
-  background: rgba(248, 113, 113, 0.12);
-  border: 1px solid rgba(248, 113, 113, 0.3);
-  color: var(--danger);
-}
-
-.tx {
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  border: 1px solid var(--card-border);
-  background: var(--card);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.tx-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.tx-pending {
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
-  color: var(--muted);
-}
-
-.tx-success {
-  border-color: rgba(52, 211, 153, 0.35);
-}
-
-.tx-error {
-  border-color: rgba(248, 113, 113, 0.35);
-  color: var(--danger);
-}
-
-.tx-note {
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin: 0;
-}
-
-.tx-hash {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin: 0;
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.tx-hash code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  color: var(--text);
-  word-break: break-all;
-  font-size: 0.8rem;
-}
-
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid var(--card-border);
-  border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
+@keyframes liquid-shimmer {
+  from {
+    background-position: 160% 0;
+  }
   to {
-    transform: rotate(360deg);
+    background-position: -60% 0;
   }
 }
 
-.footer {
-  border-top: 1px solid var(--card-border);
-  padding: 18px 24px;
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  color: var(--muted);
-  font-size: 0.8rem;
-  flex-wrap: wrap;
+@utility animate-liquid-shimmer {
+  animation: liquid-shimmer 3.2s ease-in-out infinite;
+}
+
+@keyframes liquid-pulse-ring {
+  from {
+    transform: scale(0.6);
+    opacity: 0.45;
+  }
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@utility animate-liquid-pulse-ring {
+  animation: liquid-pulse-ring 2.4s ease-out infinite;
+}
+
+@keyframes flow-line {
+  0% {
+    left: -10%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+@utility animate-flow-line {
+  animation: flow-line 3.2s linear infinite;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    /* washes halved from the original brand pass so pages read as near-neutral with a hint of warmth */
+    background-image:
+      radial-gradient(80rem 44rem at 8% -10%, oklch(0.949 0.04 97 / 0.28), transparent 60%),
+      radial-gradient(64rem 38rem at 105% 0%, oklch(0.938 0.03 86 / 0.25), transparent 55%),
+      linear-gradient(180deg, oklch(0.988 0.008 95), oklch(0.994 0.004 92));
+    background-attachment: fixed;
+  }
+  .dark body {
+    background-image:
+      radial-gradient(64rem 38rem at 105% 0%, oklch(0.28 0.024 86 / 0.2), transparent 55%),
+      linear-gradient(180deg, oklch(0.198 0.006 75), oklch(0.168 0.005 75));
+    background-attachment: fixed;
+  }
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
 }
