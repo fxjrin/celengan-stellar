@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    {
+      "source": "/faucet",
+      "destination": "https://ewqw4hx7oa.execute-api.us-east-1.amazonaws.com/getAssets"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
