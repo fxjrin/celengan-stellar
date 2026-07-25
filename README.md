@@ -5,6 +5,8 @@ vault. Connect any Stellar wallet, deposit XLM into the Celengan smart contract
 on the Stellar testnet, and withdraw anytime. Balances are held on-chain by the
 contract.
 
+**Live demo:** https://celengan-stellar.vercel.app
+
 ## Features
 
 - Multi-wallet connect via Stellar Wallets Kit (Freighter, xBull, Albedo, Lobstr,
@@ -27,6 +29,7 @@ contract.
 
 - `celengan`: `CD265PMPW2K2RKGW2XXZBZAUB7R5JNJKKDAZ7YK4TG7GVW6FQBB63NYF`
 - Explorer: https://stellar.expert/explorer/testnet/contract/CD265PMPW2K2RKGW2XXZBZAUB7R5JNJKKDAZ7YK4TG7GVW6FQBB63NYF
+- Example `deposit` contract call: https://stellar.expert/explorer/testnet/tx/74f3d2e413afe673d4230ef3ed75616d92b921661449920d96c68252348ff1ab
 
 ## Repository structure
 
