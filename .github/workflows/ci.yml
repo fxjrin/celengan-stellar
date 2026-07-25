@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  contracts:
+    name: Contract tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: contracts
+      - name: cargo test
+        working-directory: contracts
+        run: cargo test --locked
+
+  web:
+    name: Web build and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install (web + linked bindings via postinstall)
+        working-directory: web
+        run: npm install --no-audit --no-fund
+      - name: Unit tests
+        working-directory: web
+        run: npm test
+      - name: Build
+        working-directory: web
+        run: npm run build
