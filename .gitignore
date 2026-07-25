@@ -1,9 +1,10 @@
-node_modules/
 target/
+node_modules/
 web/dist/
-test_snapshots/
-*.log
-.DS_Store
 .env
-.env.local
-.stellar/
+.env.*
+!.env.example
+.DS_Store
+*.local
+.vercel
+*.log
