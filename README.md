@@ -54,6 +54,7 @@ savings share into one of three real testnet protocols via inter-contract calls:
 
 - Contract on explorer: https://stellar.expert/explorer/testnet/contract/CAFTAGQPSJIO5VSDFL6LS5NL4UDS7OQ2D22US4QTVHJJW6Y7YLWCPZ33
 - Deploy transaction: https://stellar.expert/explorer/testnet/tx/1dea53cc82463b69f2fae6ebdee8c220d37ba748e4e7c16136ae102f69197fc8
+- Example interaction (`pay` through the splitter, from the demo video): https://stellar.expert/explorer/testnet/tx/279989616e620959d87ae2a52f16bdedccae3c713dbe0db6d280ce56a836576c
 - Example interaction (`withdraw_spend`): https://stellar.expert/explorer/testnet/tx/ed58c0a8d76c6d6886b544acf6a90661812352e98e3c523b2842a7d372f6403f
 - Example inter-contract interaction (`withdraw_savings` redeeming DeFindex vault shares): https://stellar.expert/explorer/testnet/tx/356161f0d213d6760a1382d045377c544eed5873427d56d92299aaa351078a19
 
@@ -164,7 +165,7 @@ Test output (contracts and web):
 
 ## Demo video
 
-Watch the 1-2 minute demo: (link to be added)
+Watch the 1-2 minute demo: https://youtu.be/u4thIHY9fd0
 
 ## License
 
