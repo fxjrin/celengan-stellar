@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { CONTRACT_ID, EXPLORER_CONTRACT_URL } from '@/lib/config'
+import { CONTRACT_ID, EXPLORER_CONTRACT_URL, FEEDBACK_URL } from '@/lib/config'
 import { useT } from '@/lib/i18n'
 import { useSettings } from '@/lib/settings'
 
@@ -151,6 +151,20 @@ export function SettingsPage() {
             {t('settings.viewExplorer')}
             <ExternalLinkIcon className="size-4" />
           </a>
+        </CardContent>
+      </Card>
+      <Card className="rounded-2xl shadow-none">
+        <CardHeader>
+          <CardTitle>{t('settings.feedbackTitle')}</CardTitle>
+          <CardDescription>{t('settings.feedbackHint')}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button asChild variant="outline" size="sm">
+            <a href={FEEDBACK_URL} target="_blank" rel="noreferrer">
+              {t('settings.feedbackCta')}
+              <ExternalLinkIcon data-icon="inline-end" />
+            </a>
+          </Button>
         </CardContent>
       </Card>
       <Card className="rounded-2xl shadow-none">

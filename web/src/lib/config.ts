@@ -24,6 +24,10 @@ export const MAINNET_USDC_ID = 'CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLE
 
 export const EXPLORER_CONTRACT_URL = `https://stellar.expert/explorer/testnet/contract/${CONTRACT_ID}`
 
+// User feedback form (Level 4 product validation); override per deployment.
+export const FEEDBACK_URL: string =
+  import.meta.env.VITE_FEEDBACK_URL ?? 'https://forms.gle/9TMMzPP3rWVL7LoCA'
+
 export function explorerTxUrl(hash: string): string {
   return `https://stellar.expert/explorer/testnet/tx/${hash}`
 }
