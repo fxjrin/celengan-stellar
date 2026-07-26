@@ -11,6 +11,7 @@ import { ActivityCard } from '@/components/activity-card'
 import { BalanceHero } from '@/components/balance-hero'
 import { ConnectPrompt } from '@/components/connect-prompt'
 import { OnboardingChecklist } from '@/components/onboarding-checklist'
+import { SavingsGoalCard } from '@/components/savings-goal-card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { YieldSourcesCard } from '@/components/yield-sources-card'
@@ -136,6 +137,7 @@ export function Dashboard() {
               ))}
             </div>
           </section>
+          <SavingsGoalCard account={account} />
           <YieldSourcesCard
             blendApy={yieldData.blendApy}
             tvl={yieldTvl}
