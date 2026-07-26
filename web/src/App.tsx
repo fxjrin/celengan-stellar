@@ -1,3 +1,5 @@
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import { ThemeProvider } from 'next-themes'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AppShell } from '@/components/app-shell'
@@ -14,6 +16,7 @@ import { PayPage } from '@/pages/pay'
 import { PaymentLinkPage } from '@/pages/payment-link'
 import { RulesPage } from '@/pages/rules'
 import { SettingsPage } from '@/pages/settings'
+import { StatsPage } from '@/pages/stats'
 import { WithdrawPage } from '@/pages/withdraw'
 import { YieldPage } from '@/pages/yield'
 
@@ -36,6 +39,7 @@ export function App() {
                   <Route index element={<Dashboard />} />
                   <Route path="activity" element={<ActivityPage />} />
                   <Route path="yield" element={<YieldPage />} />
+                  <Route path="stats" element={<StatsPage />} />
                   <Route path="withdraw" element={<WithdrawPage />} />
                   <Route path="rules" element={<RulesPage />} />
                   <Route path="link" element={<PaymentLinkPage />} />
@@ -46,6 +50,8 @@ export function App() {
               </Routes>
             </BrowserRouter>
             <Toaster />
+            <Analytics />
+            <SpeedInsights />
           </AppStateProvider>
         </WalletProvider>
       </SettingsProvider>
