@@ -34,12 +34,17 @@ savings share into one of three real testnet protocols via inter-contract calls:
 - Payment splitting with a per-account configurable savings ratio
 - Three switchable on-chain yield sources (DeFindex vault, Blend pool, Soroswap LP)
 - Savings time lock for goals and emergency funds (with extension rules)
+- Personal savings goal with live progress tracking
 - Payment links and QR codes to request payment to your address
 - Live activity feed streamed from on-chain contract events
+- Public protocol stats page (unique wallets, payments, volume) aggregated from
+  contract events
 - Owner pause switch (deposits pause, withdrawals always work)
 - Multi-wallet connect (Freighter, xBull, Albedo, Lobstr, Rabet and more)
-- Multi-language UI (English, Indonesian, Vietnamese) with local currency display
+- Multi-language UI (English, Indonesian, Vietnamese, Filipino) with local
+  currency display
 - Mobile responsive, with loading and error states throughout
+- In-app feedback collection (Settings > Feedback)
 
 ## Contracts (testnet)
 
@@ -140,6 +145,20 @@ End-to-end check on testnet (faucet, pay, split, vault deposit, withdrawals):
 
 The web app auto-deploys to Vercel on push to `main` (root directory `web`).
 
+## Analytics, monitoring and user proof
+
+- **Usage analytics**: Vercel Analytics (visitors and page views) via
+  `@vercel/analytics`
+- **Performance monitoring**: Vercel Speed Insights (real-user Core Web
+  Vitals) via `@vercel/speed-insights`
+- **Product analytics**: the in-app [Stats page](https://celengan-stellar.vercel.app/app/stats)
+  aggregates contract events into unique wallets, payments and volume
+- **Proof of wallet interactions**: [docs/user-interactions.md](docs/user-interactions.md),
+  generated from on-chain events by `node scripts/users-report.mjs` (merges
+  across runs, every transaction verifiable on Stellar Expert)
+- **User feedback**: collected in-app (Settings > Feedback); summary in
+  [docs/feedback-summary.md](docs/feedback-summary.md)
+
 ## Testing and CI
 
 - `contracts/`: 42 Rust unit tests covering the split math, yield-target
@@ -151,9 +170,17 @@ The web app auto-deploys to Vercel on push to `main` (root directory `web`).
 
 ## Screenshots
 
+Product UI:
+
+![Product UI](docs/screenshots/l4-product.png)
+
 Mobile responsive UI:
 
-![Mobile responsive UI](docs/screenshots/l3-mobile.png)
+![Mobile responsive UI](docs/screenshots/l4-mobile.png)
+
+Product analytics (protocol stats aggregated from on-chain events):
+
+![Protocol stats](docs/screenshots/l4-stats.png)
 
 CI pipeline running:
 
